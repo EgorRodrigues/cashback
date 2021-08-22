@@ -15,7 +15,7 @@ class TestReseller:
     ):
         assert reseller.name == "First_Name Last_Name"
 
-    def test_should_return_valid_bcrypt_password_when_getting_the_attribute_password(
+    def test_should_return_valid_bcrypt_password_when_getting_the_attribute_password(  # noqa
         self, reseller
     ):
         hashed_password = reseller.password

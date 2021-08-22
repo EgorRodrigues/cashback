@@ -26,20 +26,41 @@ def start_mappers():
     )
 
 
-class ResellerIn(BaseModel):
+class ResellerBase(BaseModel):
+    cpf: str
+    email: str
+
+
+class ResellerIn(ResellerBase):
     first_name: str
     last_name: str
-    cpf: str
-    email: str
     password: str
 
+    def to_model(self) -> ResellerModel:
+        return ResellerModel(
+            first_name=self.first_name,
+            last_name=self.last_name,
+            cpf=self.cpf,
+            email=self.email,
+            plain_password=self.password,
+        )
 
-class ResellerCreated(BaseModel):
-    id: int
 
-
-class Reseller(BaseModel):
+class ResellerOut(ResellerBase):
     id: int
     name: str
-    cpf: str
-    email: str
+
+
+class ResellerInDB(ResellerBase):
+    id: int
+    first_name: str
+    last_name: str
+    hashed_password: str
+
+
+class VerifyPasswordOut(BaseModel):
+    is_valid: bool
+
+
+class VerifyPasswordIn(BaseModel):
+    plain_password: str

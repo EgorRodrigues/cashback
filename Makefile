@@ -47,13 +47,10 @@ _isort-fix:
 _black_fix:
 	@black src/ tests/
 
-_dead_fixtures:
-	@pytest src/ tests/ --dead-fixtures
-
 _mypy:
 	@mypy src/ tests/
 
-lint: _flake8 _isort _black _dead_fixtures _mypy  ## Check code lint
+lint: _flake8 _isort _black _mypy  ## Check code lint
 format-code: _isort-fix _black_fix  ## Format code
 
 
@@ -72,4 +69,4 @@ test-matching: clean ## Run tests by match ex: make test-matching k=name_of_test
 ### Run section ###
 
 run:  ## Run server with default settings
-	@uvicorn --factory src.main:create_app
+	@uvicorn --factory src.main:create_app --reload
