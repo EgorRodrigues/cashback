@@ -9,7 +9,7 @@ class Repository(Protocol):
         """Method responsible for including the reseller in the db"""
 
     def get(self, pk: int) -> Reseller:
-        '''Method responsible for getting the reseller in the db'''
+        """Method responsible for getting the reseller in the db"""
 
 
 class DatabaseRepository:
@@ -28,8 +28,9 @@ class DatabaseRepository:
         return last_record_id
 
     async def get(self, pk: int) -> ResellerSchema:
-        query = "SELECT * FROM resellers WHERE id = :id"
-        result = await self.database.fetch_one(query=query, values={'id': pk})
+        query = resellers.select().where(resellers.c.id == pk)
+        result = await self.database.fetch_one(query)
+
         name = f"{result['first_name']} {result['last_name']}"
         reseller = ResellerSchema(
             id=result['id'],
