@@ -3,7 +3,7 @@ from dataclasses import InitVar, dataclass, field
 from passlib.context import CryptContext
 
 
-@dataclass(frozen=True)
+@dataclass
 class Name:
     first: str
     last: str
@@ -17,10 +17,10 @@ class Name:
 class Reseller:
     first_name: InitVar[str]
     last_name: InitVar[str]
-    name: Name = field(init=False)
     cpf: str
     email: str
     plain_password: InitVar[str]
+    name: Name = field(init=False)
     _password: str = field(init=False)
 
     def __post_init__(
@@ -46,7 +46,7 @@ class Reseller:
         self._password = context.using().hash(password)
 
     def set_name(self, first, last) -> None:
-        self._name = Name(first, last)
+        self.name = Name(first, last)
 
     def verify_password(self, plain_password):
         context = self._get_pwd_context()

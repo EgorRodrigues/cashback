@@ -1,6 +1,6 @@
+from pydantic import BaseModel
 from sqlalchemy import Column, Integer, MetaData, String, Table
 from sqlalchemy.orm import mapper
-from pydantic import dataclasses
 
 from src.resellers.models import Reseller as ResellerModel
 
@@ -26,4 +26,20 @@ def start_mappers():
     )
 
 
-Reseller = dataclasses.dataclass(ResellerModel)
+class ResellerIn(BaseModel):
+    first_name: str
+    last_name: str
+    cpf: str
+    email: str
+    password: str
+
+
+class ResellerCreated(BaseModel):
+    id: int
+
+
+class Reseller(BaseModel):
+    id: int
+    name: str
+    cpf: str
+    email: str
