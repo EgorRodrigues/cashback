@@ -1,3 +1,5 @@
+from typing import Dict
+
 from fastapi import HTTPException
 
 from src.resellers.exceptions import ResellerDoesNotExist
@@ -16,29 +18,25 @@ class ResellerService:
     def __init__(self, repository: Repository):
         self.repository = repository
 
-    async def create(self, reseller: ResellerIn) -> ResellerInDB:
-        return await self.repository.add(reseller.to_model())
-
-    async def get_by_id(self, pk: int) -> ResellerOut:
+    async def _get_by_id(self, pk: int) -> Dict:
         try:
-            result = await self.repository.get(pk)
-            return ResellerOut(
-                id=result.id,
-                name=f"{result.first_name} {result.last_name}",
-                cpf=result.cpf,
-                email=result.email,
-            )
+            return await self.repository.get(pk)
         except ResellerDoesNotExist:
             raise HTTPException(status_code=404, detail="Reseller not found")
 
-    async def is_valid_password(
+    async def prepare_create(self, reseller: ResellerIn) -> ResellerInDB:
+        result = await self.repository.add(reseller.to_model())
+        return ResellerInDB.from_dict(result)
+
+    async def prepare_get(self, pk: int) -> ResellerOut:
+        result = await self._get_by_id(pk)
+        return ResellerOut.from_dict(result)
+
+    async def prepare_verify_password(
         self, pk: int, verify_password: VerifyPasswordIn
     ) -> VerifyPasswordOut:
-        try:
-            result = await self.repository.get(pk)
-            is_valid = ResellerModel.verify_password(
-                verify_password.plain_password, result.hashed_password
-            )
-            return VerifyPasswordOut(is_valid=is_valid)
-        except ResellerDoesNotExist:
-            raise HTTPException(status_code=404, detail="Reseller not found")
+        result = await self._get_by_id(pk)
+        is_valid = ResellerModel.verify_password(
+            verify_password.plain_password, result["_password"]
+        )
+        return VerifyPasswordOut(is_valid=is_valid)

@@ -1,24 +1,28 @@
-from typing import Protocol
+from dataclasses import asdict
+from typing import Dict, Protocol
+
+from databases import Database
+from sqlalchemy import Table
 
 from src.resellers.exceptions import ResellerDoesNotExist
 from src.resellers.models import Reseller
-from src.resellers.schemas import ResellerInDB, resellers
 
 
 class Repository(Protocol):
-    async def add(self, reseller: Reseller) -> ResellerInDB:
+    async def add(self, reseller: Reseller) -> Dict:
         """Method responsible for including the reseller in the db"""
 
-    async def get(self, pk: int) -> ResellerInDB:
+    async def get(self, pk: int) -> Dict:
         """Method responsible for getting the reseller in the db"""
 
 
 class DatabaseRepository:
-    def __init__(self, database):
+    def __init__(self, database: Database, table: Table):
         self.database = database
+        self.table = table
 
-    async def add(self, reseller: Reseller) -> ResellerInDB:
-        query = resellers.insert().values(
+    async def add(self, reseller: Reseller) -> Dict:
+        query = self.table.insert().values(
             first_name=reseller.name.first,
             last_name=reseller.name.last,
             cpf=reseller.cpf,
@@ -26,29 +30,21 @@ class DatabaseRepository:
             password=reseller.password,
         )
         last_record_id = await self.database.execute(query)
-        response = ResellerInDB(
-            id=last_record_id,
-            first_name=reseller.name.first,
-            last_name=reseller.name.last,
-            cpf=reseller.cpf,
-            email=reseller.email,
-            hashed_password=reseller.password,
-        )
-        return response
+        return {"id": last_record_id, **asdict(reseller)}
 
-    async def get(self, pk: int) -> ResellerInDB:
-        query = resellers.select().where(resellers.c.id == pk)
+    async def get(self, pk: int) -> Dict:
+        query = self.table.select().where(self.table.c.id == pk)
         result = await self.database.fetch_one(query)
 
         if result is None:
             raise ResellerDoesNotExist
 
-        reseller = ResellerInDB(
-            id=result["id"],
+        reseller = Reseller(
             first_name=result["first_name"],
-            last_name=result["last_name"],
+            last_name=result["first_name"],
             cpf=result["cpf"],
             email=result["email"],
             hashed_password=result["password"],
         )
-        return reseller
+
+        return {"id": result["id"], **asdict(reseller)}

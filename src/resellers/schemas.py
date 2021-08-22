@@ -1,29 +1,6 @@
 from pydantic import BaseModel
-from sqlalchemy import Column, Integer, MetaData, String, Table
-from sqlalchemy.orm import mapper
 
 from src.resellers.models import Reseller as ResellerModel
-
-metadata = MetaData()
-
-
-resellers = Table(
-    "resellers",
-    metadata,
-    Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("first_name", String(50), nullable=False),
-    Column("last_name", String(50), nullable=False),
-    Column("cpf", String(14), nullable=False),
-    Column("email", String(150), nullable=False),
-    Column("password", String(100), nullable=False),
-)
-
-
-def start_mappers():
-    mapper(
-        ResellerModel,
-        resellers,
-    )
 
 
 class ResellerBase(BaseModel):
@@ -50,12 +27,33 @@ class ResellerOut(ResellerBase):
     id: int
     name: str
 
+    @staticmethod
+    def from_dict(obj) -> "ResellerOut":
+        name = f'{obj["name"]["first"]} {obj["name"]["last"]}'
+        return ResellerOut(
+            id=obj["id"],
+            cpf=obj["cpf"],
+            email=obj["email"],
+            name=name,
+        )
+
 
 class ResellerInDB(ResellerBase):
     id: int
     first_name: str
     last_name: str
     hashed_password: str
+
+    @staticmethod
+    def from_dict(obj) -> "ResellerInDB":
+        return ResellerInDB(
+            id=obj["id"],
+            cpf=obj["cpf"],
+            email=obj["email"],
+            first_name=obj["name"]["first"],
+            last_name=obj["name"]["last"],
+            hashed_password=obj["_password"],
+        )
 
 
 class VerifyPasswordOut(BaseModel):

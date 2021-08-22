@@ -1,2 +1,6 @@
 class ResellerDoesNotExist(Exception):
     ...
+
+
+class PasswordValueError(ValueError):
+    ...

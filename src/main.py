@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from sqlalchemy import create_engine
 
 from src.config import database, get_db_uri
-from src.resellers.schemas import metadata
+from src.orm import metadata
 from src.routers import resellers
 
 

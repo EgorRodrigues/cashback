@@ -1,6 +1,9 @@
 from dataclasses import InitVar, dataclass, field
+from typing import Optional
 
 from passlib.context import CryptContext
+
+from src.resellers.exceptions import PasswordValueError
 
 
 @dataclass
@@ -19,7 +22,8 @@ class Reseller:
     last_name: InitVar[str]
     cpf: str
     email: str
-    plain_password: InitVar[str]
+    plain_password: InitVar[Optional[str]] = None
+    hashed_password: InitVar[Optional[str]] = None
     name: Name = field(init=False)
     _password: str = field(init=False)
 
@@ -27,10 +31,17 @@ class Reseller:
         self,
         first_name: str,
         last_name: str,
-        plain_password: str,
-    ) -> None:
+        plain_password: Optional[str],
+        hashed_password: Optional[str],
+    ):
+        if plain_password is None and hashed_password is None:
+            raise PasswordValueError
+
         self.set_name(first_name, last_name)
-        self.password = plain_password
+        if hashed_password is not None:
+            self._password = hashed_password
+        else:
+            self.password = plain_password
 
     @property
     def full_name(self) -> str:
