@@ -1,6 +1,5 @@
 from datetime import datetime
 from decimal import Decimal
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -13,13 +12,13 @@ class PurchaseBase(BaseModel):
     amount: Decimal
     date: datetime
     cpf_reseller: str
-    cashback_percent: Decimal
-    cashback_amount: Decimal
     status: Status = Status.IN_VALIDATION
 
 
 class PurchaseInDB(PurchaseBase):
     id: int
+    cashback_percent: Decimal
+    cashback_amount: Decimal
 
     @staticmethod
     def from_dict(obj) -> "PurchaseInDB":
@@ -42,11 +41,10 @@ class PurchaseIn(PurchaseBase):
             amount=self.amount,
             date=self.date,
             cpf_reseller=self.cpf_reseller,
-            cashback_amount=self.cashback_amount,
-            cashback_percent=self.cashback_percent,
             status=self.status,
         )
 
 
 class PurchaseOut(PurchaseBase):
-    ...
+    cashback_percent: Decimal
+    cashback_amount: Decimal
