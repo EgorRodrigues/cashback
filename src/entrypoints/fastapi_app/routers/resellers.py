@@ -1,7 +1,8 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, HTTPException, status
 
 from src.config import database
 from src.orm import resellers
+from src.resellers.exceptions import ResellerDoesNotExist
 from src.resellers.repository import DatabaseRepository
 from src.resellers.schemas import ResellerIn, ResellerInDB, ResellerOut
 from src.resellers.services import ResellerService
@@ -19,4 +20,7 @@ async def create(reseller: ResellerIn):
 
 @router.get("/{pk}", response_model=ResellerOut)
 async def get(pk: int):
-    return await ResellerService(repository).prepare_get(pk)
+    try:
+        return await ResellerService(repository).prepare_get(pk)
+    except ResellerDoesNotExist:
+        raise HTTPException(status_code=404, detail="Reseller not found")

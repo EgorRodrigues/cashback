@@ -26,14 +26,13 @@ class PurchaseIn(PurchaseBase):
         )
 
 
-class PurchaseInDB(PurchaseBase):
-    id: int
+class PurchaseOut(PurchaseBase):
     cashback_percent: Decimal
     cashback_amount: Decimal
 
     @staticmethod
-    def from_dict(obj) -> "PurchaseInDB":
-        return PurchaseInDB(
+    def from_dict(obj) -> "PurchaseOut":
+        return PurchaseOut(
             id=obj["id"],
             code=obj["code"],
             amount=obj["amount"],
@@ -45,14 +44,15 @@ class PurchaseInDB(PurchaseBase):
         )
 
 
-class PurchaseOut(PurchaseBase):
+class PurchaseInDB(PurchaseBase):
+    id: int
     cashback_percent: Decimal
     cashback_amount: Decimal
 
     @staticmethod
-    def from_dict(obj) -> "PurchaseOut":
-        return PurchaseOut(
-            # id=obj["id"],
+    def from_dict(obj) -> "PurchaseInDB":
+        return PurchaseInDB(
+            id=obj["id"],
             code=obj["code"],
             amount=obj["amount"],
             date=obj["date"],

@@ -7,7 +7,10 @@ from prettyconf import config
 class Client(Protocol):
     @staticmethod
     async def accrued_cashback(cpf_reseller: str) -> Dict:
-        """Method responsible for getting the accrued caskback through an external client"""
+        """
+        Method responsible for getting the accrued caskback
+        through an external client
+        """
 
 
 class HTTPXAsyncClient:

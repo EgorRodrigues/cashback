@@ -68,7 +68,7 @@ class AuthService:
             if email is None:
                 raise credentials_exception
             token_data = TokenData(email=email)
-            user = await self.repository.get_by_email(token_data.email)
+            user = await self.repository.get_by_email(str(token_data.email))
         except JWTError:
             raise credentials_exception
         except UserDoesNotExist:

@@ -1,2 +1,6 @@
 class PurchaseDoesNotExist(Exception):
     ...
+
+
+class PurchaseViolation(Exception):
+    ...
