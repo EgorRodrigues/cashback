@@ -8,8 +8,9 @@ from src.auth.repository import DatabaseRepository
 from src.auth.schemas import Token, User
 from src.auth.services import AuthService
 from src.config import database
-from src.dependencies import get_current_user
 from src.orm import resellers
+
+from ..dependencies import get_current_user
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 repository = DatabaseRepository(database, resellers)

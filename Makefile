@@ -69,4 +69,4 @@ test-matching: clean ## Run tests by match ex: make test-matching k=name_of_test
 ### Run section ###
 
 run:  ## Run server with default settings
-	@uvicorn --factory src.main:create_app --reload
+	@uvicorn --factory src.entrypoints.fastapi_app.main:create_app --reload

@@ -28,7 +28,7 @@ class Purchase:
     date: datetime
     cpf_reseller: str
     cashback: Cashback = field(init=False)
-    status: Status = Status.IN_VALIDATION
+    status: Status = Status.IN_VALIDATION.value
 
     def __post_init__(self):
         cpf_list = config("LIST_APPROVED_CPF", cast=config.eval)

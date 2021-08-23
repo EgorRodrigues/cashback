@@ -5,14 +5,14 @@ from databases import Database
 from sqlalchemy import Table
 
 from src.purchases.exceptions import PurchaseDoesNotExist
-from src.purchases.models import Purchase
+from src.purchases.models import Cashback, Purchase, Status
 
 
 class Repository(Protocol):
     async def add(self, purchase: Purchase) -> Dict:
         """Method responsible for including the purchase in the db"""
 
-    async def get(self, pk: int) -> Dict:
+    async def get(self, reseller_table: Table, pk: int) -> Dict:
         """Method responsible for seeking the purchase in the db"""
 
     # async def update(self):
@@ -26,16 +26,22 @@ class Repository(Protocol):
 
 
 class DatabaseRepository:
-    def __init__(self, database: Database, table: Table):
+    def __init__(
+        self,
+        database: Database,
+        purchases_table: Table,
+        resellers_table: Table,
+    ):
         self.database = database
-        self.table = table
+        self.purchases_table = purchases_table
+        self.resellers_table = resellers_table
 
     async def add(self, purchase: Purchase) -> Dict:
         query_reseller = "SELECT * FROM resellers WHERE cpf = :cpf"
         result = await self.database.fetch_one(
             query=query_reseller, values={"cpf": purchase.cpf_reseller}
         )
-        query = self.table.insert().values(
+        query = self.purchases_table.insert().values(
             code=purchase.code,
             amount=purchase.amount,
             date=purchase.date,
@@ -48,20 +54,23 @@ class DatabaseRepository:
         return {"id": last_record_id, **asdict(purchase)}
 
     async def get(self, pk: int) -> Dict:
-        query = self.table.select().where(self.table.c.id == pk)
-        result = await self.database.fetch_one(query)
+        query = (
+            self.purchases_table
+            .join(self.resellers_table)
+            .select()
+            .where(self.purchases_table.c.id == pk)
+        )
+        row = await self.database.fetch_one(query=query)
 
-        if result is None:
+        if row is None:
             raise PurchaseDoesNotExist
 
         purchase = Purchase(
-            code=result["code"],
-            amount=result["amount"],
-            date=result["date"],
-            cpf_reseller=result["cpf_reseller"],
-            cashback_percent=result["cashback_percent"],
-            cashback_amount=result["cashback_amount"],
-            status=result["status"],
+            code=row["code"],
+            amount=row["amount"],
+            date=row["date"],
+            cpf_reseller=row["cpf"],
+            status=row["status"],
         )
 
-        return {"id": result["id"], **asdict(purchase)}
+        return {"id": row[self.purchases_table.c.id], **asdict(purchase)}

@@ -38,8 +38,6 @@ purchases = Table(
     Column("date", DateTime, nullable=False),
     Column("cashback_percent", Numeric, nullable=False),
     Column("cashback_amount", Numeric, nullable=False),
-    Column(
-        "status", Enum(Status), nullable=False, default=Status.IN_VALIDATION
-    ),
+    Column("status", Enum(Status), nullable=False),
     Column("reseller_id", Integer, ForeignKey("resellers.id"), nullable=False),
 )
