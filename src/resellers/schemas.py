@@ -1,11 +1,11 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 from src.resellers.models import Reseller as ResellerModel
 
 
 class ResellerBase(BaseModel):
     cpf: str
-    email: str
+    email: EmailStr
 
 
 class ResellerIn(ResellerBase):
