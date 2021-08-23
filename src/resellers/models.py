@@ -59,11 +59,6 @@ class Reseller:
     def set_name(self, first, last) -> None:
         self.name = Name(first, last)
 
-    @classmethod
-    def verify_password(cls, plain_password, hashed_password) -> bool:
-        context = cls._get_pwd_context()
-        return context.verify(plain_password, hashed_password)
-
     @staticmethod
     def _get_pwd_context() -> CryptContext:
         return CryptContext(schemes=["bcrypt"], deprecated="auto")

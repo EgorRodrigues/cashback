@@ -54,11 +54,3 @@ class ResellerInDB(ResellerBase):
             last_name=obj["name"]["last"],
             hashed_password=obj["_password"],
         )
-
-
-class VerifyPasswordOut(BaseModel):
-    is_valid: bool
-
-
-class VerifyPasswordIn(BaseModel):
-    plain_password: str
