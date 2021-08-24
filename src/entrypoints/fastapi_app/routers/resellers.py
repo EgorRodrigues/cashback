@@ -1,11 +1,14 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 
+from src.auth.schemas import User
 from src.config import database
 from src.orm import resellers
 from src.resellers.exceptions import ResellerDoesNotExist
 from src.resellers.repository import DatabaseRepository
 from src.resellers.schemas import ResellerIn, ResellerInDB, ResellerOut
 from src.resellers.services import ResellerService
+
+from ..dependencies import get_current_user
 
 router = APIRouter(prefix="/resellers", tags=["resellers"])
 repository = DatabaseRepository(database, resellers)
@@ -19,7 +22,7 @@ async def create(reseller: ResellerIn):
 
 
 @router.get("/{pk}", response_model=ResellerOut)
-async def get(pk: int):
+async def get(pk: int, current_user: User = Depends(get_current_user)):
     try:
         return await ResellerService(repository).prepare_get(pk)
     except ResellerDoesNotExist:

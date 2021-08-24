@@ -66,6 +66,16 @@ test-matching: clean ## Run tests by match ex: make test-matching k=name_of_test
 	@pytest -k $(k) tests/
 
 
+### Migrations DB section ###
+
+migrations: ## Create named migrations file. Ex: make migrations name=<migration_name>
+	@alembic revision --autogenerate --message $(name)
+
+migrate:  ## Apply migrations
+	@alembic upgrade head
+
+
+
 ### Run section ###
 
 run:  ## Run server with default settings

@@ -11,9 +11,6 @@ class Status(str, Enum):
     APPROVED = "Aprovado"
     DENIED = "Negado"
 
-    def __str__(self) -> str:
-        return str.__str__(self)
-
 
 @dataclass
 class Cashback:
@@ -34,6 +31,8 @@ class Purchase:
         cpf_list = config("LIST_APPROVED_CPF", cast=config.eval)
         if self.cpf_reseller in cpf_list:
             self.status = Status.APPROVED
+        else:
+            self.status = Status.IN_VALIDATION
         self.calculate_cashback()
 
     def calculate_cashback(self):

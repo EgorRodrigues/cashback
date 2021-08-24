@@ -1,7 +1,8 @@
 from typing import List, Optional
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 
+from src.auth.schemas import User
 from src.config import database
 from src.externals.clients import HTTPXAsyncClient
 from src.externals.schemas import AccruedCashbackOut
@@ -12,6 +13,8 @@ from src.purchases.repository import DatabaseRepository
 from src.purchases.schemas import PurchaseIn, PurchaseInDB, PurchaseOut
 from src.purchases.services import PurchaseService
 
+from ..dependencies import get_current_user
+
 router = APIRouter(prefix="/purchases", tags=["purchases"])
 repository = DatabaseRepository(database, purchases, resellers)
 
@@ -19,14 +22,18 @@ repository = DatabaseRepository(database, purchases, resellers)
 @router.post(
     "/", response_model=PurchaseInDB, status_code=status.HTTP_201_CREATED
 )
-async def create(purchase: PurchaseIn):
+async def create(
+    purchase: PurchaseIn, current_user: User = Depends(get_current_user)
+):
     return await PurchaseService(repository).prepare_create(purchase)
 
 
 @router.get(
     "/accrued_cashback/{cpf_reseller}", response_model=AccruedCashbackOut
 )
-async def accrued_cashback(cpf_reseller: str):
+async def accrued_cashback(
+    cpf_reseller: str, current_user: User = Depends(get_current_user)
+):
     return await ExternalsService(HTTPXAsyncClient()).prepare_accrued_cashback(
         cpf_reseller
     )
@@ -35,7 +42,7 @@ async def accrued_cashback(cpf_reseller: str):
 @router.get(
     "/{pk}", response_model=PurchaseOut, status_code=status.HTTP_200_OK
 )
-async def get(pk: int):
+async def get(pk: int, current_user: User = Depends(get_current_user)):
     try:
         return await PurchaseService(repository).prepare_get(pk)
     except PurchaseDoesNotExist:
@@ -43,7 +50,11 @@ async def get(pk: int):
 
 
 @router.put("/{pk}", status_code=status.HTTP_204_NO_CONTENT)
-async def update(pk: int, purchase: PurchaseIn):
+async def update(
+    pk: int,
+    purchase: PurchaseIn,
+    current_user: User = Depends(get_current_user),
+):
     result = await PurchaseService(repository).prepare_update(pk, purchase)
     if not result:
         raise HTTPException(
@@ -54,7 +65,7 @@ async def update(pk: int, purchase: PurchaseIn):
 
 
 @router.delete("/{pk}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete(pk: int):
+async def delete(pk: int, current_user: User = Depends(get_current_user)):
     result = await PurchaseService(repository).prepare_delete(pk)
     if not result:
         raise HTTPException(
@@ -67,5 +78,8 @@ async def delete(pk: int):
 @router.get(
     "/", response_model=List[PurchaseOut], status_code=status.HTTP_200_OK
 )
-async def get_items(reseller_id: Optional[int] = None):
+async def get_items(
+    reseller_id: Optional[int] = None,
+    current_user: User = Depends(get_current_user),
+):
     return await PurchaseService(repository).prepare_list(reseller_id)

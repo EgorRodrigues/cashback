@@ -1,9 +1,10 @@
-from typing import Dict, Protocol
+from typing import Dict, Protocol, runtime_checkable
 
 import httpx
 from prettyconf import config
 
 
+@runtime_checkable
 class Client(Protocol):
     @staticmethod
     async def accrued_cashback(cpf_reseller: str) -> Dict:

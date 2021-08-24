@@ -1,5 +1,5 @@
 from dataclasses import asdict
-from typing import Dict, List, Optional, Protocol
+from typing import Dict, List, Optional, Protocol, runtime_checkable
 
 from databases import Database
 from sqlalchemy import Table
@@ -9,6 +9,7 @@ from src.purchases.exceptions import PurchaseDoesNotExist
 from src.purchases.models import Purchase, Status
 
 
+@runtime_checkable
 class Repository(Protocol):
     async def add(self, purchase: Purchase) -> Dict:
         """Method responsible for including the purchase in the db"""
