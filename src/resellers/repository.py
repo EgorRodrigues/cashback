@@ -1,5 +1,5 @@
 from dataclasses import asdict
-from typing import Dict, Protocol
+from typing import Dict, Protocol, runtime_checkable
 
 from databases import Database
 from sqlalchemy import Table
@@ -8,6 +8,7 @@ from src.resellers.exceptions import ResellerDoesNotExist
 from src.resellers.models import Reseller
 
 
+@runtime_checkable
 class Repository(Protocol):
     async def add(self, reseller: Reseller) -> Dict:
         """Method responsible for including the reseller in the db"""
