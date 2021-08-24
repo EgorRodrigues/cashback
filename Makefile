@@ -69,10 +69,10 @@ test-matching: clean ## Run tests by match ex: make test-matching k=name_of_test
 ### Migrations DB section ###
 
 migrations: ## Create named migrations file. Ex: make migrations name=<migration_name>
-	@alembic revision --autogenerate --message $(name)
+	@python -m alembic revision --autogenerate --message $(name)
 
 migrate:  ## Apply migrations
-	@alembic upgrade head
+	@python -m alembic upgrade head
 
 
 
@@ -81,3 +81,4 @@ run:  ## Run server with default settings
 	@uvicorn --factory src.entrypoints.fastapi_app.main:create_app --reload
 
 init: dev-dependencies migrate ## Initialize project
+	@cp -n .env.sample .env
