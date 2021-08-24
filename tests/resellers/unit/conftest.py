@@ -55,14 +55,5 @@ def resellerin_schema():
 
 
 @pytest.fixture
-def shelve_session():
-    session = shelve.open("test.db", writeback=True)
-    try:
-        yield session
-    finally:
-        session.close()
-
-
-@pytest.fixture
 def fake_repository(shelve_session):
     return FakeShelveRepository(shelve_session)

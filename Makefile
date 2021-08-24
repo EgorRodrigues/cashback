@@ -77,6 +77,7 @@ migrate:  ## Apply migrations
 
 
 ### Run section ###
-
 run:  ## Run server with default settings
 	@uvicorn --factory src.entrypoints.fastapi_app.main:create_app --reload
+
+init: dev-dependencies migrate ## Initialize project

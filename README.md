@@ -1,10 +1,8 @@
 ## Descrição
-***
 Esta aplicação fornece API HTTP REST, recebendo registros de Resellers (revendedores) e Purchases (compras) inserindo as
 informações no banco de dados e calculando cashback
 
 ## USO
-***
 Para executar essa aplicação, você precisará de:
 * python 3.9+
 
