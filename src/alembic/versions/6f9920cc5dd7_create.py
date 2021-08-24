@@ -1,9 +1,7 @@
 """Create
-
 Revision ID: 6f9920cc5dd7
-Revises: 
+Revises:
 Create Date: 2021-08-24 01:28:35.038127
-
 """
 import sqlalchemy as sa
 
