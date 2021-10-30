@@ -1,10 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.schemas import User
-from src.db import database
+from src.db import database, get_db
 from src.orm import resellers
 from src.resellers.exceptions import ResellerDoesNotExist
-from src.resellers.repository import DatabaseRepository
+from src.resellers.repository import (
+    DatabaseRepository,
+    SQLAlchemyAsyncRepository,
+)
 from src.resellers.schemas import ResellerIn, ResellerInDB, ResellerOut
 from src.resellers.services import ResellerService
 
@@ -17,7 +21,8 @@ repository = DatabaseRepository(database, resellers)
 @router.post(
     "/", response_model=ResellerInDB, status_code=status.HTTP_201_CREATED
 )
-async def create(reseller: ResellerIn):
+async def create(reseller: ResellerIn, db: AsyncSession = Depends(get_db)):
+    repository = SQLAlchemyAsyncRepository(db)
     return await ResellerService(repository).prepare_create(reseller)
 
 

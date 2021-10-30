@@ -49,3 +49,15 @@ class DatabaseRepository:
         )
 
         return {"id": result["id"], **asdict(reseller)}
+
+
+class SQLAlchemyAsyncRepository:
+    def __init__(self, session):
+        self.session = session
+
+    async def add(self, reseller: Reseller):
+        self.session.add(reseller)
+        await self.session.commit()
+
+    async def get(self, pk: int) -> Dict:
+        ...
