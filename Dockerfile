@@ -19,6 +19,4 @@ RUN cp -n .env.sample .env
 
 EXPOSE 8000
 
-RUN alembic upgrade head
-
-CMD ["uvicorn", "--factory", "src.entrypoints.fastapi_app.main:create_app", "--host", "0.0.0.0"]
+ENTRYPOINT ./docker-entrypoint.sh
