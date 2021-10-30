@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.auth.schemas import User
-from src.config import database
+from src.db import database
 from src.orm import resellers
 from src.resellers.exceptions import ResellerDoesNotExist
 from src.resellers.repository import DatabaseRepository

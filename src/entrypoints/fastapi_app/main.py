@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
-from src.config import database
+from src.db import database
+from src.orm import start_mappers
 
 from .routers import auth, purchases, resellers
 
@@ -15,6 +16,7 @@ def create_app():
     @app.on_event("startup")
     async def startup():
         await database.connect()
+        start_mappers()
 
     @app.on_event("shutdown")
     async def shutdown():

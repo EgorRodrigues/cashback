@@ -7,7 +7,7 @@ from prettyconf import config
 from src.auth.repository import DatabaseRepository
 from src.auth.schemas import Token, User
 from src.auth.services import AuthService
-from src.config import database
+from src.db import database
 from src.orm import resellers
 
 from ..dependencies import get_current_user

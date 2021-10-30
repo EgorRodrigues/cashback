@@ -1,5 +1,6 @@
-import pytest
 import shelve
+
+import pytest
 
 
 @pytest.fixture

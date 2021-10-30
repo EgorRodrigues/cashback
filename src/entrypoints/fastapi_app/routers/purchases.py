@@ -3,7 +3,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.auth.schemas import User
-from src.config import database
+from src.db import database
 from src.externals.clients import HTTPXAsyncClient
 from src.externals.schemas import AccruedCashbackOut
 from src.externals.services import ExternalsService
