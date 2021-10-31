@@ -3,7 +3,7 @@ from fastapi import Depends
 from src.auth.repository import DatabaseRepository
 from src.auth.schemas import User
 from src.auth.services import AuthService
-from src.config import database
+from src.db import database
 from src.orm import resellers
 
 repository = DatabaseRepository(database, resellers)
