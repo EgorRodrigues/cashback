@@ -29,12 +29,11 @@ class ResellerOut(ResellerBase):
 
     @staticmethod
     def from_dict(obj) -> "ResellerOut":
-        name = f'{obj["name"]["first"]} {obj["name"]["last"]}'
         return ResellerOut(
-            id=obj["id"],
-            cpf=obj["cpf"],
-            email=obj["email"],
-            name=name,
+            id=obj.id,
+            cpf=obj.cpf,
+            email=obj.email,
+            name=obj.name.full,
         )
 
 
@@ -47,10 +46,10 @@ class ResellerInDB(ResellerBase):
     @staticmethod
     def from_dict(obj) -> "ResellerInDB":
         return ResellerInDB(
-            id=obj["id"],
-            cpf=obj["cpf"],
-            email=obj["email"],
-            first_name=obj["name"]["first"],
-            last_name=obj["name"]["last"],
-            hashed_password=obj["_password"],
+            id=obj.id,
+            cpf=obj.cpf,
+            email=obj.email,
+            first_name=obj.first_name,
+            last_name=obj.last_name,
+            hashed_password=obj._password,
         )

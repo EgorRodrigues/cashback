@@ -15,6 +15,22 @@ class Name:
     def full(self) -> str:
         return f"{self.first} {self.last}"
 
+    def __composite_values__(self):
+        return self.first, self.last
+
+    def __repr__(self):
+        return "Name(first=%s, last=%s)" % (self.first, self.last)
+
+    def __eq__(self, other):
+        return (
+            isinstance(other, Name)
+            and other.first == self.first
+            and other.last == self.last
+        )
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
 
 @dataclass
 class Reseller:

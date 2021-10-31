@@ -1,14 +1,16 @@
-"""Create
-Revision ID: 6f9920cc5dd7
-Revises:
-Create Date: 2021-08-24 01:28:35.038127
+"""create_resellers_and_purshases_tables
+
+Revision ID: cf8dcb7df009
+Revises: 
+Create Date: 2021-10-31 03:13:48.223842
+
 """
 import sqlalchemy as sa
 
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = "6f9920cc5dd7"
+revision = "cf8dcb7df009"
 down_revision = None
 branch_labels = None
 depends_on = None

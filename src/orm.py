@@ -9,10 +9,10 @@ from sqlalchemy import (
     Table,
     UniqueConstraint,
 )
-from sqlalchemy.orm import registry, relationship
+from sqlalchemy.orm import composite, registry, relationship, synonym
 
 from src.purchases.models import Purchase, Status
-from src.resellers.models import Reseller
+from src.resellers.models import Name, Reseller
 
 mapper_registry = registry()
 
@@ -49,6 +49,12 @@ def start_mappers():
         Reseller,
         resellers,
         properties={
+            "name": composite(
+                Name, resellers.c.first_name, resellers.c.last_name
+            ),
+            "password": synonym(
+                "_password", map_column=True, descriptor=Reseller.password
+            ),
             "purchases": relationship(
                 Purchase, backref="resellers", order_by=purchases.c.id
             ),
