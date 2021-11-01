@@ -11,17 +11,17 @@ class PurchaseBase(BaseModel):
     code: str
     amount: Decimal
     date: datetime
-    cpf_reseller: str
     status: Status = Status.IN_VALIDATION.value
 
 
 class PurchaseIn(PurchaseBase):
+    cpf_reseller: str
+
     def to_model(self) -> PurchaseModel:
         return PurchaseModel(
             code=self.code,
             amount=self.amount,
             date=self.date,
-            cpf_reseller=self.cpf_reseller,
             status=self.status,
         )
 
@@ -33,14 +33,13 @@ class PurchaseOut(PurchaseBase):
     @staticmethod
     def from_dict(obj) -> "PurchaseOut":
         return PurchaseOut(
-            id=obj["id"],
-            code=obj["code"],
-            amount=obj["amount"],
-            date=obj["date"],
-            cpf_reseller=obj["cpf_reseller"],
-            cashback_percent=obj["cashback"]["percent"],
-            cashback_amount=obj["cashback"]["amount"],
-            status=obj["status"],
+            id=obj.id,
+            code=obj.code,
+            amount=obj.amount,
+            date=obj.date,
+            cashback_percent=obj.cashback_percent,
+            cashback_amount=obj.cashback_amount,
+            status=obj.status,
         )
 
 
@@ -52,12 +51,11 @@ class PurchaseInDB(PurchaseBase):
     @staticmethod
     def from_dict(obj) -> "PurchaseInDB":
         return PurchaseInDB(
-            id=obj["id"],
-            code=obj["code"],
-            amount=obj["amount"],
-            date=obj["date"],
-            cpf_reseller=obj["cpf_reseller"],
-            cashback_percent=obj["cashback"]["percent"],
-            cashback_amount=obj["cashback"]["amount"],
-            status=obj["status"],
+            id=obj.id,
+            code=obj.code,
+            amount=obj.amount,
+            date=obj.date,
+            cashback_percent=obj.cashback_percent,
+            cashback_amount=obj.cashback_amount,
+            status=obj.status,
         )

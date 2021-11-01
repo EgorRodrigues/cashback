@@ -9,7 +9,9 @@ class PurchaseService:
         self.repository = repository
 
     async def prepare_create(self, purchase: PurchaseIn) -> PurchaseInDB:
-        result = await self.repository.add(purchase.to_model())
+        result = await self.repository.add_by_cpf(
+            purchase.cpf_reseller, purchase.to_model()
+        )
         return PurchaseInDB.from_dict(result)
 
     async def prepare_get(self, pk: int) -> PurchaseOut:
