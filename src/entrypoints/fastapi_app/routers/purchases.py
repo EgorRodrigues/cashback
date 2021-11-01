@@ -1,15 +1,19 @@
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.schemas import User
-from src.db import database
+from src.db import database, get_db
 from src.externals.clients import HTTPXAsyncClient
 from src.externals.schemas import AccruedCashbackOut
 from src.externals.services import ExternalsService
 from src.orm import purchases, resellers
 from src.purchases.exceptions import PurchaseDoesNotExist
-from src.purchases.repository import DatabaseRepository
+from src.purchases.repository import (
+    DatabaseRepository,
+    SQLAlchemyAsyncRepository,
+)
 from src.purchases.schemas import PurchaseIn, PurchaseInDB, PurchaseOut
 from src.purchases.services import PurchaseService
 
@@ -23,8 +27,11 @@ repository = DatabaseRepository(database, purchases, resellers)
     "/", response_model=PurchaseInDB, status_code=status.HTTP_201_CREATED
 )
 async def create(
-    purchase: PurchaseIn, current_user: User = Depends(get_current_user)
+    purchase: PurchaseIn,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
+    repository = SQLAlchemyAsyncRepository(db)
     return await PurchaseService(repository).prepare_create(purchase)
 
 
@@ -42,7 +49,12 @@ async def accrued_cashback(
 @router.get(
     "/{pk}", response_model=PurchaseOut, status_code=status.HTTP_200_OK
 )
-async def get(pk: int, current_user: User = Depends(get_current_user)):
+async def get(
+    pk: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    repository = SQLAlchemyAsyncRepository(db)
     try:
         return await PurchaseService(repository).prepare_get(pk)
     except PurchaseDoesNotExist:

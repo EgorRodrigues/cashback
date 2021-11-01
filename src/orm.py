@@ -11,7 +11,9 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import composite, registry, relationship, synonym
 
-from src.purchases.models import Purchase, Status
+from src.purchases.models import Cashback, Purchase
+from src.purchases.models import Reseller as ResellerPurchase
+from src.purchases.models import Status
 from src.resellers.models import Name, Reseller
 
 mapper_registry = registry()
@@ -55,9 +57,25 @@ def start_mappers():
             "password": synonym(
                 "_password", map_column=True, descriptor=Reseller.password
             ),
+        },
+    )
+    mapper_registry.map_imperatively(
+        ResellerPurchase,
+        resellers,
+        properties={
             "purchases": relationship(
                 Purchase, backref="resellers", order_by=purchases.c.id
             ),
         },
     )
-    mapper_registry.map_imperatively(Purchase, purchases)
+    mapper_registry.map_imperatively(
+        Purchase,
+        purchases,
+        properties={
+            "cashback": composite(
+                Cashback,
+                purchases.c.cashback_percent,
+                purchases.c.cashback_amount,
+            ),
+        },
+    )
