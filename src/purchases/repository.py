@@ -1,14 +1,13 @@
-from dataclasses import asdict
-from typing import Dict, List, Optional, Protocol, runtime_checkable
+from typing import List, Optional, Protocol, runtime_checkable
 
 from databases import Database
 from sqlalchemy import Table
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import selectinload
-from sqlalchemy.sql import and_, select
+from sqlalchemy.sql import delete, select
 
 from src.purchases.exceptions import PurchaseDoesNotExist
-from src.purchases.models import Purchase, Reseller, Status
+from src.purchases.models import Purchase, Reseller
 
 
 @runtime_checkable
@@ -46,37 +45,6 @@ class DatabaseRepository:
         self.database = database
         self.purchases_table = purchases_table
         self.resellers_table = resellers_table
-
-    async def update(self, pk: int, purchase: Purchase) -> bool:
-        query = (
-            self.purchases_table.update()
-            .where(
-                and_(
-                    self.purchases_table.c.id == pk,
-                    self.purchases_table.c.status == Status.IN_VALIDATION,
-                )
-            )
-            .values(
-                code=purchase.code,
-                amount=purchase.amount,
-                date=purchase.date,
-                cashback_percent=purchase.cashback.percent,
-                cashback_amount=purchase.cashback.amount,
-                status=purchase.status,
-            )
-        )
-        result = await self.database.execute(query=query)
-        return bool(result)
-
-    async def delete(self, pk: int) -> bool:
-        query = self.purchases_table.delete().where(
-            and_(
-                self.purchases_table.c.id == pk,
-                self.purchases_table.c.status == Status.IN_VALIDATION,
-            )
-        )
-        result = await self.database.execute(query=query)
-        return bool(result)
 
     async def list_purchases(self, reseller_id: Optional[int] = None) -> List:
         query = select(
@@ -126,11 +94,25 @@ class SQLAlchemyAsyncRepository:
         except NoResultFound:
             raise PurchaseDoesNotExist
 
-    async def update(self, pk: int, purchase: Purchase) -> bool:
-        """Method responsible for editing the purchase in the db"""
+    async def update(self, pk: int, new_purchase: Purchase) -> bool:
+        statement = select(Purchase).filter_by(id=pk)
+        result = await self.session.execute(statement)
+        current_purchase = result.scalar_one()
+
+        current_purchase.code = new_purchase.code
+        current_purchase.amount = new_purchase.amount
+        current_purchase.date = new_purchase.date
+        current_purchase.cashback = new_purchase.cashback
+        current_purchase.status = new_purchase.status
+
+        await self.session.commit()
+        return True
 
     async def delete(self, pk: int) -> bool:
-        """Method responsible for deleting the purchase in the db"""
+        statement = delete(Purchase).where(Purchase.id == pk)
+        await self.session.execute(statement)
+        await self.session.commit()
+        return True
 
     async def list_purchases(
         self, reseller_id: Optional[int] = None
