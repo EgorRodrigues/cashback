@@ -65,8 +65,10 @@ async def get(
 async def update(
     pk: int,
     purchase: PurchaseIn,
+    db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    repository = SQLAlchemyAsyncRepository(db)
     result = await PurchaseService(repository).prepare_update(pk, purchase)
     if not result:
         raise HTTPException(
@@ -77,7 +79,12 @@ async def update(
 
 
 @router.delete("/{pk}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete(pk: int, current_user: User = Depends(get_current_user)):
+async def delete(
+    pk: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    repository = SQLAlchemyAsyncRepository(db)
     result = await PurchaseService(repository).prepare_delete(pk)
     if not result:
         raise HTTPException(
