@@ -6,27 +6,28 @@ authors = ["Egor C. Rodrigues"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-fastapi = "^0.70"
-databases = "^0.5.3"
+fastapi = "^0.80"
+databases = "^0.6.1"
 prettyconf = "^2.2.1"
-uvicorn = {version = "^0.15.0", extras = ["standard"]}
+uvicorn = {version = "^0.18.2", extras = ["standard"]}
 passlib = {version = "^1.7.4", extras = ["bcrypt"]}
-alembic = "^1.7"
-email-validator = "^1.1.3"
-httpx = "^0.20"
+alembic = "^1.8.1"
+email-validator = "^1.2.1"
+httpx = "^0.23.0"
 python-jose = {version = "^3.3.0", extras = ["cryptography"]}
 python-multipart = "^0.0.5"
 SQLAlchemy = {version = "^1.4.26", extras = ["asyncio"]}
+greenlet = "^1.1.2"
 
 [tool.poetry.dev-dependencies]
-black = "^21.9b0"
-coverage = "^6.1"
-flake8 = "^4.0"
-isort = "^5.9.3"
-mypy = "^0.910"
-pytest = "^6.2"
+black = "^22.6.0"
+coverage = "^6.4.4"
+flake8 = "^5.0.4"
+isort = "^5.10.1"
+mypy = "^0.971"
+pytest = "^7.1.2"
 pytest-cov = "^3.0"
-pytest-asyncio = "^0.16"
+pytest-asyncio = "^0.19"
 aiosqlite = "^0.17.0"
 pytest-vcr = "^1.0.2"
 
